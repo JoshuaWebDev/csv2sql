@@ -20,22 +20,26 @@
 * após ">" pelo nome do arquivo sem os colchetes []
 */
 
+require_once('queries.php');
+
 // Verifica se os argumentos foram informados corretamente
 if ( $argc < 2 ) {
     print( "Após invocar o nome do programa digite o nome do arquivo que será convertido!\n" );
     exit();
 }
 
-if ( $argc < 3 ) {
-    print( "Após o nome do arquivo que será convertido informe o nome da tabela que será criada!\n" );
-    exit();
-}
+//if ( $argc < 3 ) {
+//    print( "Após o nome do arquivo que será convertido informe o nome da tabela que será criada!\n" );
+//    exit();
+//}
+
+//$sql_file = "";
 
 // nome do arquivo csv
 $file_name = $argv[1];
 
 // nome da tabela que será criada
-$table_name = $argv[2];
+//$table_name = $argv[2];
 
 // Verifica se o arquivo existe
 function handleFile( $file_name ) {
@@ -49,33 +53,22 @@ function handleFile( $file_name ) {
 
 }
 
-function createTable( $table_name, $csv_head ) {
-
-    // elimina quebra de linhas
-    $csv_head = preg_replace( "/(\r\n|\n|\r)+/", "", $csv_head );
-
-    // inicia a string contendo as instruções em sql
-    $sql = "CREATE TABLE {$table_name} (";
-
-    for ( $i = 0; $i < count( $csv_head ); $i++ ) {
-
-        $sql .= "\n    {$csv_head[$i]} VARCHAR(255),";
-
-    } 
-
-    // elimina a última vírgula após o último parênteses
-    $sql = preg_replace( "/,$/", "", $sql );
-
-    return $sql .= "\n);";
-}
-
 try {
 
     $csv_file_array = handleFile( $file_name );
 
-    $csv_head = explode( ";", $csv_file_array[0] );
+    $csv_head = getHeadFromCSV( $csv_file_array );
 
-    echo createTable( $table_name, $csv_head );
+    $csv_data = extractDataFromCSV( $csv_head, $csv_file_array );
+
+    print_r( $csv_data );
+
+    // Cria a tabela
+    // $sql_file .= createTable( $table_name, $csv_head );
+
+    // $sql_file .= addSerialPrimaryKey( $table_name );
+
+    // echo $sql_file."\n";
 
 } catch ( Exception $e ) {
     echo "Aviso: ", $e->getMessage(), "\n";
