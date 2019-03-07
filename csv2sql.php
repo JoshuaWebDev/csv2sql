@@ -4,7 +4,7 @@
 * Autor: Josué Barros da Silva
 * Website: joshuawebdev.wordpress.com
 * Email: josue.barros1986@gmail.com
-* Versão 1.0
+* Versão 1.1
 *
 * Lê um arquivo no formato csv ao qual consiste em uma tabela
 * importada de um banco de dados qualquer
@@ -28,18 +28,18 @@ if ( $argc < 2 ) {
     exit();
 }
 
-//if ( $argc < 3 ) {
-//    print( "Após o nome do arquivo que será convertido informe o nome da tabela que será criada!\n" );
-//    exit();
-//}
+if ( $argc < 3 ) {
+    print( "Após o nome do arquivo que será convertido informe o nome da tabela que será criada!\n" );
+    exit();
+}
 
-//$sql_file = "";
+$sql_file = "";
 
 // nome do arquivo csv
 $file_name = $argv[1];
 
 // nome da tabela que será criada
-//$table_name = $argv[2];
+$table_name = $argv[2];
 
 // Verifica se o arquivo existe
 function handleFile( $file_name ) {
@@ -57,18 +57,23 @@ try {
 
     $csv_file_array = handleFile( $file_name );
 
+
+    // getHeadFromCSV retorna uma array com o nome dos atributos da tabela
     $csv_head = getHeadFromCSV( $csv_file_array );
 
+    // extractDataFromCSV retorna um array bidimensional contenddo os dados da tabela
     $csv_data = extractDataFromCSV( $csv_head, $csv_file_array );
 
-    print_r( $csv_data );
 
-    // Cria a tabela
-    // $sql_file .= createTable( $table_name, $csv_head );
+    // adiciona à $sql_file uma string contendo comandos sql para criação da tabela
+    $sql_file .= createTable( $table_name, $csv_head );
 
-    // $sql_file .= addSerialPrimaryKey( $table_name );
+    // adiciona uma chave primária à tabela
+    $sql_file .= addSerialPrimaryKey( $table_name );
 
-    // echo $sql_file."\n";
+    $sql_file .= copyTable( $table_name, $csv_head, $file_name );
+
+    echo $sql_file."\n";
 
 } catch ( Exception $e ) {
     echo "Aviso: ", $e->getMessage(), "\n";

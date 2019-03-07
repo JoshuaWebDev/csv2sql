@@ -4,9 +4,12 @@ function getHeadFromCSV( $csv_file_array ) {
 
     $head = explode( ";", $csv_file_array[0] );
 
-    $head = preg_replace( "/\"/", "", $head );
+    // elimina quebra de linhas
+    $head = preg_replace( "/(\r\n|\n|\r)+/", "", $head );
 
-    return 
+    // retorna o array $head sem as aspas
+    return preg_replace( "/\"/", "", $head );
+
 }
 
 function extractDataFromCSV( $columns, $rows ) {
@@ -16,7 +19,7 @@ function extractDataFromCSV( $columns, $rows ) {
     // passa por todas as linhas depois da primeira
     for( $i = 0; $i < count( $rows ); $i++ ) {
         
-        $row = explode( ";", $rows[$i+1] );
+        @$row = explode( ";", $rows[$i+1] );
 
         for( $j = 0; $j < count( $row ); $j++ ) {
 
@@ -26,7 +29,7 @@ function extractDataFromCSV( $columns, $rows ) {
         }
     
     }
-    
+
     array_pop( $data );
 
     return $data;
