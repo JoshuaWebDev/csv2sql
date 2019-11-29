@@ -1,6 +1,7 @@
 alunos.sql
-<<<<<<< HEAD
-data_example.csv
-=======
 data_examples.csv
->>>>>>> master
+index.php
+migrador.php
+data_handler.php
+queries.php
+getdatafromcsv.php
