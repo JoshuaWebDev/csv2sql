@@ -25,7 +25,7 @@
 require_once('queries.php');
 require_once('data_handler.php');
 
-/*/ Verifica se os argumentos foram informados corretamente
+/ Verifica se os argumentos foram informados corretamente
 if ( $argc < 2 ) {
     print( "Após invocar o nome do programa digite o nome do arquivo que será convertido!\n" );
     exit();
