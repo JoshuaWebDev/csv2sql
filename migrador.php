@@ -1,66 +1,32 @@
 <?php
 
-/**
-* Autor: Josué Barros da Silva
-* Website: joshuawebdev.wordpress.com
-* Email: josue.barros1986@gmail.com
-* Versão 1.2
-*
-* Lê um arquivo no formato csv ao qual consiste em uma tabela
-* importada de um banco de dados qualquer
-* linha do arquivo .csv contém os atributos da tabela
-* A segunda linha em diante contém os dados de cada registro da tabela
-* A primeira linha é dividida e transformada em um array
-* onde seus elementos são os atributos da tabela
-* As demais linhas do arquivo são convertidas em arrays bidimensionais
-* onde cada elemento do array é um dado da tabela
-*
-* É possível salvar o conteúdo em outro arquivo por meio do
-* comando php csv2sql.php [nome_arquivo].csv [nome_tabela] > [nome_arquivo].sql
-* onde [nome_arquivo].csv é o arquivo que será submetido
-* [nome_tabela] é o nome da tabela que será gerada com os dados de [arquivo].csv
-* e [nome_arquivo].sql é o arquivo contendo as queries geradas pelo csv2sq
-*/
-
 require_once('queries.php');
 require_once('data_handler.php');
 
-/*/ Verifica se os argumentos foram informados corretamente
-if ( $argc < 2 ) {
-    print( "Após invocar o nome do programa digite o nome do arquivo que será convertido!\n" );
-    exit();
-}
+$uploaddir ="uploads/";
 
-if ( $argc < 3 ) {
-    print( "Após o nome do arquivo que será convertido informe o nome da tabela que será criada!\n" );
-    exit();
-}*/
+$csv_file = $uploaddir . basename($_FILES["csv_file"]["school_name"]);
 
-$sql_file = "";
+$school_name = $_POST["school_name"];
 
-// nome do arquivo csv
-$file_name = "/home/joshua/www/migracoes/constelação/pessoas/constelacao_alunos_responsaveis.csv";
-//$argv[1];
-
-// nome da tabela que será criada
-$table_name = "alunos_constelacao";
-//$argv[2];
+$file_name = $_FILES["csv_file"]["school_name"];
+$file_type = $_FILES["csv_file"]["application/sql"];
 
 // Verifica se o arquivo existe
-function handleFile( $file_name ) {
+function handleFile( $csv_file ) {
 
-    if ( !file_exists( $file_name  ) ) {
-        throw new Exception( "O arquivo {$file_name} não existe ou encontra-se em outra pasta!" );
+    if ( !file_exists( $csv_file  ) ) {
+        throw new Exception( "O arquivo {$csv_file} não existe ou encontra-se em outra pasta!" );
     }
 
     // retorna um número inteiro, o indicador do arquivo
-    return file( $file_name );
+    return file( $csv_file );
 
 }
 
 try {
 
-    $csv_file_array = handleFile( $file_name );
+    $csv_file_array = handleFile( $csv_file );
 
 
     // getHeadFromCSV retorna uma array com o nome dos atributos da tabela
@@ -82,7 +48,7 @@ try {
     $sql_file .= "\n-- ** Adicionando chave primária";
     $sql_file .= addSerialPrimaryKey( $table_name );
 
-/* ----------------------------- TRATANDO DO DADOS --------------------------------- */
+/* ----------------------------- TRATANDO DO DADOS --------------------------------- */    
 
     // altera o nome dos atributos para caixa alta
     $sql_file .= "\n-- ** Alterando os campos para maiúsculo";
@@ -118,21 +84,13 @@ try {
     $sql_file .= setNewDate($table_name, "aluno_nascimento", "dt_nasc_aluno");
     $sql_file .= setNewDate($table_name, "nasc_responsavel", "dt_nasc_responsavel");
 
-    // PESQUISANDO ATRIBUTOS COM CAMPOS VAZIOS
-
-    $sql_file .= searchEmptyValues( $table_name, $csv_head );
-
     // PREENCHER VALORES VAZIOS
     $sql_file .= "\n-- PREENCHER VALORES VAZIOS";
-    $sql_file .= fillFieldVoidDates($table_name, "dt_nasc_aluno");
-    $sql_file .= fillFieldVoidDates($table_name, "dt_nasc_responsavel");
+    $sql_file .= fillFieldVoidDates($table_name, "aluno_nascimento");
+    $sql_file .= fillFieldVoidDates($table_name, "nasc_responsavel");
 
     $sql_file .= fillFieldVoid($table_name, "nome_pai");
     $sql_file .= fillFieldVoid($table_name, "nome_mae");
-    $sql_file .= fillFieldVoid($table_name, "nome_mae");
-
-    // FORMATA CPF FORA DO PADRÃO
-    $sql_file .= setCPF($table_name, "cpf_aluno");
 
     echo $sql_file."\n";
 

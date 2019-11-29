@@ -12,7 +12,7 @@ function getHeadFromCSV( $csv_file_array ) {
 
 }
 
-function extractDataFromCSV( $columns, $rows ) {
+function extractDataFromCSV( $rows ) {
 
     $data = array();
 
