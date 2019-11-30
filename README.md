@@ -16,8 +16,6 @@ Dependências
 --------------------------------------------------------------
 É necessário ter instalado em seu computador a o PHP a partir da versão 5.6 (versão com suporte a execução pelo terminal).
 
-O arquivo principal é csv2sql.php, que depende de queries.php, que, por sua vez, depende de getdatafromcsv.php. É necessário que todos estejam em um mesmo diretório, caso contrário, estranhamente não funcionará.
-
 Execução
 --------------------------------------------------------------
 O programa roda por meio de um terminal (prompt de comando, no caso do Windows). Ele recebe dois parâmetros:
@@ -25,13 +23,7 @@ O programa roda por meio de um terminal (prompt de comando, no caso do Windows).
 1. arquivo .csv que será convertido para .sql
 2. nome da tabela que será gerada após a conversão
 
-Após efetuar o download dos arquivos
-
-* csv2sql.php
-* queries.php
-*	getdatafromcsv.php
-
-e salvá-los em um mesmo diretório, execute o comando:
+Tendo o arquivo csv no mesmo diretório que o programa csv2sql.php execute o comando:
 
     php csv2sql.php [param1] [param2]
 
@@ -48,6 +40,7 @@ Porém isso exibirá as queries geradas no terminal e isso não é muito interes
     php csv2sql.php data_example.csv alunos > alunos.sql
 
 Melhorias Futuras
-----------------------------------------------------------------
-- A saída é gerada no terminal. Para ser gerada em um arquivo é necessário adicionar ` > [nome_arquivo].sql` após o segundo parâmetro, onde nome_arquivo.sql é o nome do arquivo que receberá a saída.
-- O programa carece de mais funções de tratamento dos dados obtidos por meio da importação do arquivo .csv
+-----------------------------------------------------------------
+- A saída é gerada no terminal. Para ser gerada em um arquivo é necessário adicionar ` > [nome_arquivo].sql` após o segundo parâmetro, onde nome_arquivo.sql é o nome do arquivo que receberá a saída. Como melhoria futura seria interessante o programa poder gerar este arquivo automaticamente com o nome da tabela sem a necessidade de mais um parâmetro, como ` > [nome_arquivo].sql`.
+- O programa carece de funções de tratamento dos dados obtidos por meio da importação do arquivo .csv, como por exemplo: funções que eliminem espaços em branco, redudâncias, etc.
+- A querie gerada retorna todos os campos do tipo string, independente de qual era o tipo original (integer, double, date, etc).
