@@ -71,14 +71,14 @@ $csv2sql = new Csv2Sql;
 $csv2sql->setFile("csv/dados.csv");   // aqui você informa o local onde está o arquivo csv
 $csv2sql->setTable("nome_da_tabela"); // aqui você dá o nome da tabela
 
-$createDB = $csv2sql->getCreateTableQuery(); // query gerada para criar o BD (CREATE TABLE ...)
-$insertData = $csv2sql->getInsertDataQuery() // array contendo as queries para inserir os dados (INSERT INTO ...)
+$createDB = $csv2sql->getCreateTableQuery();  // query gerada para criar o BD (CREATE TABLE ...)
+$insertData = $csv2sql->getInsertDataQuery(); // array contendo as queries para inserir os dados (INSERT INTO ...)
 
 // HÁ OUTROS MÉTODO QUE VOCÊ PODE USAR COMO POR EXEMPLO
 
-$csv2sql->getTableName()     // exibe o nome da tabela
-$csv2sql->getColumnNames()   // retorna um array com o nome das colunas (head)
-$csv2sql->getDataFromTable() // return um array com os dados obtidos do arquivo csv (sem head, só os dados)
+$csv2sql->getTableName();     // exibe o nome da tabela
+$csv2sql->getColumnNames();   // retorna um array com o nome das colunas (head)
+$csv2sql->getDataFromTable(); // return um array com os dados obtidos do arquivo csv (sem head, só os dados)
 ```
 
 Melhorias Futuras
