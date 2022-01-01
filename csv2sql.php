@@ -39,18 +39,17 @@ if ( $argc < 3 ) {
     exit();
 }
 
-if ( $argc < 4 ) {
-    print( "Você deve informar qual o separador utilizado no arquivo csv para separar as colunas (vírgula, ponto e vírgula, etc)!\n" );
-    exit();
-}
-
 try {
 
     $csv2sql->setFile($argv[1]);
     $csv2sql->setTable($argv[2]);
-    $csv2sql->setSeparator($argv[3]);
 
     echo $csv2sql->getCreateTableQuery();
+    echo "\n\n";
+
+    foreach($csv2sql->getInsertDataQuery() as $data) {
+        echo $data;
+    }
 
 } catch ( Exception $e ) {
     echo "Ops! Algo de errado não esta certo. {$e->getMessage()}\n";
