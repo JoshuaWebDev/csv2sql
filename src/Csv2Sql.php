@@ -9,7 +9,9 @@ class Csv2Sql
     private $csvFileArray = null;     // array contendo cada uma das linhas do arquivo csv
     private $tableName = null;        // nome da tabela que será criada
     private $columnNames = null;      // nome das colunas geradas a partir da primeira linha do arquivo csv
+    private $dataFromTable = [];      // array que contém as linhas do arquivo csv com os dados que serão usados para alimentar a tabela
     private $createTableQuery = null; // instrução sql que cria a tabela
+    private $insertDataQuery = null;  // instrução sql que irá inserir os dados na tabela recêm-criada
 
     public function getTableName()
     {
@@ -26,15 +28,27 @@ class Csv2Sql
         return $this->columnNames;
     }
 
+    public function getDataFromTable()
+    {
+        return $this->dataFromTable;
+    }
+
     public function getCreateTableQuery()
     {
         return $this->createTableQuery;
     }
 
+    public function getInsertDataQuery()
+    {
+        return $this->insertDataQuery;
+    }
+
     public function setFile( $filename)
     {
         $filearray = $this->handleFile($filename);
+        // cria um array com o nome das colunas da tabela a partir da primeira linha do arquivo csv
         $this->columnNames = $this->makeColumnNames( $filearray );
+        $this->dataFromTable = $this->setDataFromTable( $filearray );
         $this->fileName = $filename;
     }
 
@@ -42,11 +56,7 @@ class Csv2Sql
     {
         $this->tableName = $tablename;
         $this->createTable();
-    }
-
-    public function setSeparator( $separator )
-    {
-        $this->separator = $separator;
+        $this->insertDataToTable();
     }
 
     private function handleFile( $filename )
@@ -63,8 +73,9 @@ class Csv2Sql
         return file( $filename );
     }
 
-    private function makeColumnNames( $csvfilearray ) {
-
+    // cria um array com o nome das tabelas a partir da primeira linha do arquivo csv
+    private function makeColumnNames( $csvfilearray )
+    {
         $head = explode( $this->separator, $csvfilearray[0] );
     
         // elimina quebra de linhas
@@ -77,6 +88,21 @@ class Csv2Sql
     
     }
 
+    private function setDataFromTable( $csvfilearray )
+    {
+        $counter = 1;
+        $linesFromFile = [];
+
+        for ($counter; $counter < count($csvfilearray); $counter++) {
+            $temp = explode($this->separator, $csvfilearray[$counter]);
+
+            array_push($linesFromFile, $temp);
+        }
+
+        return $linesFromFile;
+    }
+
+    // cria a query utilizada para criar a tabela
     private function createTable()
     {
         if (is_null($this->columnNames)) {
@@ -85,14 +111,61 @@ class Csv2Sql
 
         $colunas = $this->columnNames;
 
-        $sql = "CREATE TABLE {$this->tableName} (ID INT NOT NULL PRIMARY KEY";
+        $sql = "CREATE TABLE IF NOT EXISTS {$this->tableName} (\n\tid INT NOT NULL PRIMARY KEY";
 
         foreach ($colunas as $col) {
-            $sql .= ", $col";
+            if (!empty($col)) {
+                $sql .= ",\n\t$col VARCHAR";
+            }
         }
 
-        $sql .= ");\n";
+        $sql .= "\n);";
 
         $this->createTableQuery = $sql;
+    }
+
+    private function insertDataToTable()
+    {
+        $items = [];
+
+        // if (is_null($this->tableName)) {
+        //     return "Você precisa informar o nome da tabela onde serão inseridos os dados\n";
+        // }
+
+        // if (is_null($this->columnNames)) {
+        //     return "Nome das colunas está nulo (NULL)\n";
+        // }
+
+        foreach ($this->dataFromTable as $row) {
+            $sql = "INSERT INTO {$this->tableName} (";
+
+            foreach ($this->columnNames as $key => $column) {
+                if (!empty($column)) {
+                    $sql .= "\"{$column}\"";
+
+                    if ($key < count($this->columnNames) - 2) {
+                        $sql .= ",";
+                    }
+                }
+            }
+
+            $sql .= ")\nVALUES (\n\t";
+
+            foreach($row as $k => $r) {
+                if (!empty($r)) {
+                    $sql .= "\"{$r}";
+
+                    if ($k < count($row) - 2) {
+                        $sql .= "\", ";
+                    }
+                }
+            }
+
+            $sql .= ");\n\n";
+
+            array_push($items, $sql);
+        }
+
+        $this->insertDataQuery = $items;
     }
 }
