@@ -1,0 +1,20 @@
+{
+    "name": "joshuawebdev/csv2sql",
+    "description": "Convert content from csv files to sql instructions that might to be use on create tables",
+    "type": "library",
+    "keywords": ["csv", "sql", "convert", "queries", "converter", "csv2sql"],
+    "authors": [
+        {
+            "name": "Josué Barros da Silva",
+            "email": "josue.barros1986@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">= 5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "JoshuaWebDev\\Csv2Sql\\": "src/"
+        }
+    }
+}

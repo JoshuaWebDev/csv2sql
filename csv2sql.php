@@ -4,7 +4,7 @@
 * Autor: Josué Barros da Silva
 * Website: joshuawebdev.wordpress.com
 * Email: josue.barros1986@gmail.com
-* Versão 1.2
+* Versão 1.3
 *
 * Lê um arquivo no formato csv ao qual consiste em uma tabela
 * importada de um banco de dados qualquer
@@ -22,6 +22,11 @@
 * e [nome_arquivo].sql é o arquivo contendo as queries geradas pelo csv2sq
 */
 
+require __DIR__ . '/vendor/autoload.php';
+
+use JoshuaWebDev\Csv2Sql\Csv2Sql;
+
+$csv2sql = new Csv2Sql;
 
 // Verifica se os argumentos foram informados corretamente
 if ( $argc < 2 ) {
@@ -34,54 +39,19 @@ if ( $argc < 3 ) {
     exit();
 }
 
-// nome do arquivo csv
-$file_name = $argv[1];
-
-// nome da tabela que será criada
-$table_name = $argv[2];
-
-// Verifica se o arquivo existe
-function handleFile( $file_name ) {
-
-    if ( !file_exists( $file_name  ) ) {
-        throw new Exception( "O arquivo {$file_name} não existe ou encontra-se em outra pasta!" );
-    }
-
-    // retorna um número inteiro, o indicador do arquivo
-    return file( $file_name );
-
-}
-
-function createTable( $table_name, $csv_head ) {
-
-    // elimina quebra de linhas
-    $csv_head = preg_replace( "/(\r\n|\n|\r)+/", "", $csv_head );
-
-    // inicia a string contendo as instruções em sql
-    $sql = "CREATE TABLE {$table_name} (";
-
-    for ( $i = 0; $i < count( $csv_head ); $i++ ) {
-
-        $sql .= "\n    {$csv_head[$i]} VARCHAR(255),";
-
-    }
-
-    // elimina a última vírgula após o último parênteses
-    $sql = preg_replace( "/,$/", "", $sql );
-
-    return $sql .= "\n);";
+if ( $argc < 4 ) {
+    print( "Você deve informar qual o separador utilizado no arquivo csv para separar as colunas (vírgula, ponto e vírgula, etc)!\n" );
+    exit();
 }
 
 try {
 
-    $csv_file_array = handleFile( $file_name );
+    $csv2sql->setFile($argv[1]);
+    $csv2sql->setTable($argv[2]);
+    $csv2sql->setSeparator($argv[3]);
 
-    $csv_head = explode( ";", $csv_file_array[0] );
-
-    echo createTable( $table_name, $csv_head );
+    echo $csv2sql->getCreateTableQuery();
 
 } catch ( Exception $e ) {
-    echo "Aviso: ", $e->getMessage(), "\n";
+    echo "Ops! Algo de errado não esta certo. {$e->getMessage()}\n";
 }
-
-?>
