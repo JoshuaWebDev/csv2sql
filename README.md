@@ -4,7 +4,7 @@
 
 + Autor: [Joshua](joshuawebdev.wordpress.com)
 + Linguagem: [PHP](https://www.php.net)
-+ Versão 1.3
++ Versão 1.4
 
 Descrição:
 ---------------------------------------------------------------
@@ -46,12 +46,6 @@ Vamos converter o arquivo data_example.csv para um arquivo sql com as instruçõ
 php csv2sql.php csv/data_example.csv alunos
 ```
 
-Porém isso exibirá as queries geradas no terminal e isso não é muito interessante. Para gerar um arquivo com as queries de criação da tabela adicione ` > [nome_arquivo].sql` após o segundo parâmetro, onde **[nome_arquivo].sql** será o nome do arquivo que pretende-se criar. Vejamos um exemplo mais completo onde geramos a tabela alunos e a salvamos no arquivo alunos.sql.
-
-```
-php csv2sql.php csv/data_example.csv alunos > alunos.sql
-```
-
 Recomendações
 -----------------------------------------------------------------
 - Esta versão do programa ainda exige algumas melhorias em relação a tratamento do arquivo csv antes da conversão, por exemplo eliminação de espaços em branco, linhas desnecessárias ou outras informações geradas automaticamente por uma planilha e que não sejam necessária para a criação das queries. Então uma dica seria eliminar essas inconformidades antes de executar o programa.
@@ -78,11 +72,10 @@ $insertData = $csv2sql->getInsertDataQuery(); // array contendo as queries para 
 
 $csv2sql->getTableName();     // exibe o nome da tabela
 $csv2sql->getColumnNames();   // retorna um array com o nome das colunas (head)
-$csv2sql->getDataFromTable(); // return um array com os dados obtidos do arquivo csv (sem head, só os dados)
+$csv2sql->getDataFromTable(); // retorna um array com os dados obtidos do arquivo csv (sem head, só os dados)
 ```
 
 Melhorias Futuras
 -----------------------------------------------------------------
-- [ ] A saída é gerada no terminal. Para ser gerada em um arquivo é necessário adicionar ` > [nome_arquivo].sql` após o terceiro parâmetro, onde nome_arquivo.sql é o nome do arquivo que receberá a saída. Como melhoria futura seria interessante o programa poder gerar este arquivo automaticamente com o nome da tabela sem a necessidade de mais um parâmetro, como ` > [nome_arquivo].sql`.
 - [ ] O programa carece de funções de tratamento dos dados obtidos por meio da importação do arquivo .csv, como por exemplo: funções que eliminem espaços em branco, redudâncias, etc.
 - [ ] A querie gerada retorna todos os campos do tipo string, independente de qual era o tipo original (integer, double, datetime, etc).

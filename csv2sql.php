@@ -22,12 +22,14 @@ try {
     $csv2sql->setFile($argv[1]);
     $csv2sql->setTable($argv[2]);
 
-    echo $csv2sql->getCreateTableQuery();
-    echo "\n\n";
+    $content = $csv2sql->getCreateTableQuery();
+    $content .= "\n\n";
 
     foreach($csv2sql->getInsertDataQuery() as $data) {
-        echo $data;
+        $content .= $data;
     }
+
+    file_put_contents($argv[2] . '.sql', $content);
 
 } catch ( Exception $e ) {
     echo "Ops! Algo de errado não esta certo. {$e->getMessage()}\n";

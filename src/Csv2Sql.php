@@ -1,10 +1,13 @@
 <?php
 
+namespace JoshuaWebDev\Csv2Sql;
+
 /**
-* Autor: Josué Barros da Silva
+* @author Josué Barros da Silva
 * Website: joshuawebdev.wordpress.com
+* GitHub: https://github.com/JoshuaWebDev
 * Email: josue.barros1986@gmail.com
-* Versão 1.3
+* @version 1.3
 *
 * Lê um arquivo no formato csv ao qual consiste em uma tabela importada de um banco de dados qualquer
 * A primeira linha do arquivo csv contém os atributos da tabela
@@ -19,12 +22,10 @@
 * e [nome_arquivo].sql é o arquivo contendo as queries geradas pelo csv2sq
 */
 
-namespace JoshuaWebDev\Csv2Sql;
-
 class Csv2Sql
 {
     private $fileName = null;         // nome do arquivo csv com os dados que serão inseridos na tabela
-    private $separator = ",";         // utilizado para separar as colunas no arquivo csv (padrão = "vírgula")
+    private $separator = ";";         // utilizado para separar as colunas no arquivo csv (padrão = "vírgula")
     private $csvFileArray = null;     // array contendo cada uma das linhas do arquivo csv
     private $tableName = null;        // nome da tabela que será criada
     private $columnNames = null;      // nome das colunas geradas a partir da primeira linha do arquivo csv
@@ -32,36 +33,57 @@ class Csv2Sql
     private $createTableQuery = null; // instrução sql que cria a tabela
     private $insertDataQuery = null;  // instrução sql que irá inserir os dados na tabela recêm-criada
 
+    /**
+     * @return string
+     */
     public function getTableName()
     {
         return $this->tableName;
     }
 
+    /**
+     * @return string
+     */
     public function getFileName()
     {
         return $this->fileName;
     }
 
+    /**
+     * @return array
+     */
     public function getColumnNames()
     {
         return $this->columnNames;
     }
 
+    /**
+     * @return array
+     */
     public function getDataFromTable()
     {
         return $this->dataFromTable;
     }
 
+    /**
+     * @return string
+     */
     public function getCreateTableQuery()
     {
         return $this->createTableQuery;
     }
 
+    /**
+     * @return string
+     */
     public function getInsertDataQuery()
     {
         return $this->insertDataQuery;
     }
 
+    /**
+     * @return void
+     */
     public function setFile( $filename)
     {
         $filearray = $this->handleFile($filename);
@@ -71,6 +93,9 @@ class Csv2Sql
         $this->fileName = $filename;
     }
 
+    /**
+     * @return void
+     */
     public function setTable( $tablename )
     {
         $this->tableName = $tablename;
@@ -78,6 +103,9 @@ class Csv2Sql
         $this->insertDataToTable();
     }
 
+    /**
+     * @return int
+     */
     private function handleFile( $filename )
     {
         if (  is_null( $filename ) ) {
@@ -92,7 +120,10 @@ class Csv2Sql
         return file( $filename );
     }
 
-    // cria um array com o nome das tabelas a partir da primeira linha do arquivo csv
+    /**
+     * cria um array com o nome das tabelas a partir da primeira linha do arquivo csv
+     * @return array
+     */
     private function makeColumnNames( $csvfilearray )
     {
         $head = explode( $this->separator, $csvfilearray[0] );
@@ -107,6 +138,9 @@ class Csv2Sql
     
     }
 
+    /**
+     * @return array
+     */
     private function setDataFromTable( $csvfilearray )
     {
         $counter = 1;
@@ -121,7 +155,10 @@ class Csv2Sql
         return $linesFromFile;
     }
 
-    // cria a query utilizada para criar a tabela
+    /**
+     * cria a query utilizada para criar a tabela
+     * @return void
+     */
     private function createTable()
     {
         if (is_null($this->columnNames)) {
@@ -143,6 +180,9 @@ class Csv2Sql
         $this->createTableQuery = $sql;
     }
 
+    /**
+     * @return void
+     */
     private function insertDataToTable()
     {
         $items = [];
